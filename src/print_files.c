@@ -3,6 +3,14 @@
 #include <sys/xattr.h>
 #include <sys/acl.h>
 
+#if !defined(ACL_TYPE_EXTENDED)
+# define ACL_TYPE_EXTENDED 0
+#endif
+
+#if !defined(XATTR_NOFOLLOW)
+# define XATTR_NOFOLLOW 0
+#endif
+
 void print_files(t_file *head, int flags, const char *path)
 {
     (void)path;

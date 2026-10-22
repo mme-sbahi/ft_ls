@@ -33,7 +33,6 @@ clean:
 fclean: clean
 	rm -f $(NAME)
 	$(MAKE) -C $(LIBFT_DIR) fclean
-	rm -rf ft_ls
 
 re: fclean all
 
