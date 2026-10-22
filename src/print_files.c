@@ -149,13 +149,21 @@ void print_acl(t_file *file)
         }
         acl_free(acl);
     }
+#if defined(XATTR_NOFOLLOW)
     ssize_t xattr_size = listxattr(file->path, NULL, 0, XATTR_NOFOLLOW);
+#else
+    ssize_t xattr_size = listxattr(file->path, NULL, 0);
+#endif
     if (xattr_size > 0)
     {
         char *xattr_list = malloc(xattr_size + 1);
         if (xattr_list)
         {
+#if defined(XATTR_NOFOLLOW)
             listxattr(file->path, xattr_list, xattr_size, XATTR_NOFOLLOW);
+#else
+            listxattr(file->path, xattr_list, xattr_size);
+#endif
             xattr_list[xattr_size] = '\0';
             ft_printf(" %s", xattr_list);
             free(xattr_list);
@@ -165,7 +173,11 @@ void print_acl(t_file *file)
 
 static int has_xattr(const char *path)
 {
+#if defined(XATTR_NOFOLLOW)
     ssize_t size = listxattr(path, NULL, 0, XATTR_NOFOLLOW);
+#else
+    ssize_t size = listxattr(path, NULL, 0);
+#endif
     return (size > 0);
 }
 
