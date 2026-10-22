@@ -1,11 +1,6 @@
 #include "ft_ls.h"
 #include <sys/ioctl.h>
 #include <sys/xattr.h>
-#include <sys/acl.h>
-
-#if !defined(ACL_TYPE_EXTENDED)
-# define ACL_TYPE_EXTENDED 0
-#endif
 
 #if !defined(XATTR_NOFOLLOW) && (defined(__APPLE__) || defined(__MACH__))
 # define XATTR_NOFOLLOW 0x0001
@@ -138,37 +133,7 @@ void reset_color(void)
 
 void print_acl(t_file *file)
 {
-    acl_t acl = acl_get_file(file->path, ACL_TYPE_EXTENDED);
-    if (acl)
-    {
-        char *acl_text = acl_to_text(acl, NULL);
-        if (acl_text)
-        {
-            ft_printf(" %s", acl_text);
-            acl_free(acl_text);
-        }
-        acl_free(acl);
-    }
-#if defined(__APPLE__) || defined(__MACH__)
-    ssize_t xattr_size = listxattr(file->path, NULL, 0, XATTR_NOFOLLOW);
-#else
-    ssize_t xattr_size = listxattr(file->path, NULL, 0);
-#endif
-    if (xattr_size > 0)
-    {
-        char *xattr_list = malloc(xattr_size + 1);
-        if (xattr_list)
-        {
-#if defined(__APPLE__) || defined(__MACH__)
-            listxattr(file->path, xattr_list, xattr_size, XATTR_NOFOLLOW);
-#else
-            listxattr(file->path, xattr_list, xattr_size);
-#endif
-            xattr_list[xattr_size] = '\0';
-            ft_printf(" %s", xattr_list);
-            free(xattr_list);
-        }
-    }
+    (void)file;
 }
 
 static int has_xattr(const char *path)
