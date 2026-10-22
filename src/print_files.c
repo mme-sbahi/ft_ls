@@ -7,8 +7,8 @@
 # define ACL_TYPE_EXTENDED 0
 #endif
 
-#if !defined(XATTR_NOFOLLOW)
-# define XATTR_NOFOLLOW 0
+#if !defined(XATTR_NOFOLLOW) && (defined(__APPLE__) || defined(__MACH__))
+# define XATTR_NOFOLLOW 0x0001
 #endif
 
 void print_files(t_file *head, int flags, const char *path)
@@ -149,7 +149,7 @@ void print_acl(t_file *file)
         }
         acl_free(acl);
     }
-#if defined(XATTR_NOFOLLOW)
+#if defined(__APPLE__) || defined(__MACH__)
     ssize_t xattr_size = listxattr(file->path, NULL, 0, XATTR_NOFOLLOW);
 #else
     ssize_t xattr_size = listxattr(file->path, NULL, 0);
@@ -159,7 +159,7 @@ void print_acl(t_file *file)
         char *xattr_list = malloc(xattr_size + 1);
         if (xattr_list)
         {
-#if defined(XATTR_NOFOLLOW)
+#if defined(__APPLE__) || defined(__MACH__)
             listxattr(file->path, xattr_list, xattr_size, XATTR_NOFOLLOW);
 #else
             listxattr(file->path, xattr_list, xattr_size);
@@ -173,7 +173,7 @@ void print_acl(t_file *file)
 
 static int has_xattr(const char *path)
 {
-#if defined(XATTR_NOFOLLOW)
+#if defined(__APPLE__) || defined(__MACH__)
     ssize_t size = listxattr(path, NULL, 0, XATTR_NOFOLLOW);
 #else
     ssize_t size = listxattr(path, NULL, 0);
