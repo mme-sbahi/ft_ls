@@ -19,6 +19,12 @@
 #define OPT_A 4
 #define OPT_R_REV 8
 #define OPT_T 16
+#define OPT_U 32
+#define OPT_F 64
+#define OPT_G 128
+#define OPT_D 256
+#define OPT_COLOR 512
+#define OPT_ACL 1024
 
 typedef struct s_file {
     char            *name; // Filename only (e.g., "Makefile")
@@ -42,7 +48,7 @@ void            free_file_list(t_file *head);
 void            sort_files(t_file **head, int flags);
 int             compare_files(t_file *a, t_file *b, int flags);
 void            print_files(t_file *head, int flags, const char *path);
-void            print_long_format(t_file *file);
+void            print_long_format(t_file *file, int flags);
 char            *get_permissions(mode_t mode);
 char            *get_time_string(time_t mtime);
 void            print_recursive(t_file *head, int flags, const char *path);
@@ -50,5 +56,13 @@ int             is_hidden(const char *name);
 void            handle_error(const char *path);
 void            print_total_blocks(t_file *head);
 int             ft_printf(const char *format, ...);
+int             get_terminal_width(void);
+void            print_files_columns(t_file *head, int flags);
+char            *get_color(mode_t mode);
+void            reset_color(void);
+void            print_acl(t_file *file);
+char            *get_cached_user(uid_t uid);
+char            *get_cached_group(gid_t gid);
+void            free_cache(void);
 
 #endif

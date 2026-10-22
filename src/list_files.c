@@ -1,4 +1,5 @@
 #include "ft_ls.h"
+#include <string.h>
 
 static char *build_path(const char *dir, const char *name)
 {
@@ -25,7 +26,10 @@ t_file *create_file_node(const char *name, const char *path)
     if (!node)
         return (NULL);
     node->name = ft_strdup(name);
-    full_path = build_path(path, name);
+    if (strcmp(path, ".") == 0)
+        full_path = ft_strdup(name);
+    else
+        full_path = build_path(path, name);
     node->path = full_path;
     if (lstat(full_path, &node->stat) == -1)
     {

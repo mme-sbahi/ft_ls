@@ -20,10 +20,28 @@ static void parse_flags(const char *arg, t_options *opts)
             opts->flags |= OPT_R_REV;
         else if (arg[i] == 't')
             opts->flags |= OPT_T;
+        else if (arg[i] == 'u')
+            opts->flags |= OPT_U;
+        else if (arg[i] == 'f')
+        {
+            opts->flags |= OPT_F;
+            opts->flags |= OPT_A;
+        }
+        else if (arg[i] == 'g')
+        {
+            opts->flags |= OPT_G;
+            opts->flags |= OPT_L;
+        }
+        else if (arg[i] == 'd')
+            opts->flags |= OPT_D;
+        else if (arg[i] == 'G')
+            opts->flags |= OPT_COLOR;
+        else if (arg[i] == '@')
+            opts->flags |= OPT_ACL;
         else
         {
             ft_printf("ft_ls: illegal option -- %c\n", arg[i]);
-            ft_printf("usage: ft_ls [-Ralrt] [file ...]\n");
+            ft_printf("usage: ft_ls [-RalrtufgdG@] [file ...]\n");
             exit(1);
         }
         i++;

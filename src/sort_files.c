@@ -12,6 +12,27 @@ static int compare_time(t_file *a, t_file *b)
         return (-1);
     else if (a->stat.st_mtime < b->stat.st_mtime)
         return (1);
+#if defined(__APPLE__) || defined(__MACH__)
+    if (a->stat.st_mtimespec.tv_nsec > b->stat.st_mtimespec.tv_nsec)
+        return (-1);
+    else if (a->stat.st_mtimespec.tv_nsec < b->stat.st_mtimespec.tv_nsec)
+        return (1);
+#endif
+    return (compare_name(a, b));
+}
+
+static int compare_access_time(t_file *a, t_file *b)
+{
+    if (a->stat.st_atime > b->stat.st_atime)
+        return (-1);
+    else if (a->stat.st_atime < b->stat.st_atime)
+        return (1);
+#if defined(__APPLE__) || defined(__MACH__)
+    if (a->stat.st_atimespec.tv_nsec > b->stat.st_atimespec.tv_nsec)
+        return (-1);
+    else if (a->stat.st_atimespec.tv_nsec < b->stat.st_atimespec.tv_nsec)
+        return (1);
+#endif
     return (compare_name(a, b));
 }
 
@@ -20,7 +41,12 @@ int compare_files(t_file *a, t_file *b, int flags)
     int result;
 
     if (flags & OPT_T)
-        result = compare_time(a, b);
+    {
+        if (flags & OPT_U)
+            result = compare_access_time(a, b);
+        else
+            result = compare_time(a, b);
+    }
     else
         result = compare_name(a, b);
     if (flags & OPT_R_REV)
@@ -83,6 +109,8 @@ static void merge_sort(t_file **head, int flags)
 
     if (!*head || !(*head)->next)
         return;
+    if (flags & OPT_F)
+        return;
     split_list(*head, &a, &b);
     merge_sort(&a, flags);
     merge_sort(&b, flags);
@@ -91,5 +119,7 @@ static void merge_sort(t_file **head, int flags)
 
 void sort_files(t_file **head, int flags)
 {
+    if (flags & OPT_F)
+        return;
     merge_sort(head, flags);
 }

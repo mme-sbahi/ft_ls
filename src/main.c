@@ -4,6 +4,18 @@ static void process_path(t_options *opts, const char *path)
 {
     t_file *files;
 
+    if (opts->flags & OPT_D)
+    {
+        files = create_file_node(path, ".");
+        if (!files)
+            return;
+        sort_files(&files, opts->flags);
+        if (opts->path_count > 1 && !(opts->flags & OPT_D))
+            ft_printf("%s:\n", path);
+        print_files(files, opts->flags, path);
+        free_file_list(files);
+        return;
+    }
     files = read_directory(path, opts->flags);
     if (!files)
         return;
